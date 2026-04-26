@@ -1,0 +1,19 @@
+api.anupro.app {
+    reverse_proxy localhost:8080
+
+    # Security headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    log {
+        output file /var/log/caddy/api.log {
+            roll_size 100mb
+            roll_keep 5
+        }
+        format json
+    }
+}

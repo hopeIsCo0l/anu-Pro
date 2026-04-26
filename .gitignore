@@ -1,0 +1,27 @@
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Claude Code local
+.claude/
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/bin/
+/dist/
+
+# Env
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db

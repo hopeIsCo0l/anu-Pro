@@ -1,0 +1,26 @@
+version: "2"
+
+linters:
+  enable:
+    - errcheck
+    - staticcheck
+    - gosimple
+    - ineffassign
+    - unused
+    - govet
+    - gofmt
+    - misspell
+    - unconvert
+    - unparam
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+
+issues:
+  exclude-rules:
+    # Test files can use _ for error returns
+    - path: "_test\\.go"
+      linters:
+        - errcheck

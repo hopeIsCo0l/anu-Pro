@@ -1,0 +1,55 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+# Only run after CI passes (implicit — same push triggers both workflows,
+# but deploy waits for the CI job via needs if combined, or use workflow_run).
+
+jobs:
+  deploy:
+    name: Deploy to Oracle VM
+    runs-on: ubuntu-latest
+    # Prevent concurrent deploys
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/anu-pro:latest
+            ghcr.io/${{ github.repository_owner }}/anu-pro:${{ github.sha }}
+
+      - name: Deploy to Oracle VM
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.ORACLE_HOST }}
+          username: ubuntu
+          key: ${{ secrets.ORACLE_SSH_KEY }}
+          script: |
+            cd /opt/anu
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker pull ghcr.io/${{ github.repository_owner }}/anu-pro:latest
+            # Run migrations before restarting the app
+            docker run --rm --env-file /opt/anu/.env \
+              ghcr.io/${{ github.repository_owner }}/anu-pro:latest \
+              /app/migrate up public
+            systemctl restart anu-api anu-worker
+            # Health check
+            sleep 5
+            curl -sf http://localhost:8080/health || (echo "Health check failed"; exit 1)

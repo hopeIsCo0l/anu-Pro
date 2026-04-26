@@ -1,0 +1,25 @@
+[Unit]
+Description=Anu Pro API
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/anu
+EnvironmentFile=/opt/anu/.env
+ExecStartPre=/usr/bin/docker pull ghcr.io/hopeisco0l/anu-pro:latest
+ExecStart=/usr/bin/docker run --rm \
+    --name anu-api \
+    --env-file /opt/anu/.env \
+    -p 127.0.0.1:8080:8080 \
+    ghcr.io/hopeisco0l/anu-pro:latest \
+    /app/api
+ExecStop=/usr/bin/docker stop anu-api
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

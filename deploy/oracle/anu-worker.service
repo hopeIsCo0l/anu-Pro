@@ -1,0 +1,23 @@
+[Unit]
+Description=Anu Pro Worker
+After=network.target docker.service anu-api.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/anu
+EnvironmentFile=/opt/anu/.env
+ExecStart=/usr/bin/docker run --rm \
+    --name anu-worker \
+    --env-file /opt/anu/.env \
+    ghcr.io/hopeisco0l/anu-pro:latest \
+    /app/worker
+ExecStop=/usr/bin/docker stop anu-worker
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

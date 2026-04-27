@@ -11,9 +11,9 @@ import (
 )
 
 type ImportResult struct {
-	Created  int      `json:"created"`
-	Skipped  int      `json:"skipped"`
-	Errors   []string `json:"errors,omitempty"`
+	Created int      `json:"created"`
+	Skipped int      `json:"skipped"`
+	Errors  []string `json:"errors,omitempty"`
 }
 
 // ImportItemsCSV reads a CSV file and bulk-creates items.

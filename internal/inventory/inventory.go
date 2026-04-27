@@ -132,10 +132,10 @@ type RecordMovementRequest struct {
 }
 
 type TransferRequest struct {
-	LotID              string          `json:"lot_id"`
-	SourceLocationID   string          `json:"source_location_id"`
-	DestLocationID     string          `json:"dest_location_id"`
-	Quantity           decimal.Decimal `json:"quantity"`
-	IdempotencyKey     string          `json:"idempotency_key"`
-	Notes              *string         `json:"notes"`
+	LotID            string          `json:"lot_id"`
+	SourceLocationID string          `json:"source_location_id"`
+	DestLocationID   string          `json:"dest_location_id"`
+	Quantity         decimal.Decimal `json:"quantity"`
+	IdempotencyKey   string          `json:"idempotency_key"`
+	Notes            *string         `json:"notes"`
 }

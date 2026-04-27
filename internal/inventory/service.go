@@ -337,7 +337,7 @@ func (s *Service) RecordMovement(ctx context.Context, req RecordMovementRequest,
 	if err != nil {
 		return nil, fmt.Errorf("begin tx: %w", err)
 	}
-	defer tx.Rollback(ctx)
+	defer tx.Rollback(ctx) //nolint:errcheck
 
 	// Verify lot and location exist
 	var lotExists, locExists bool
@@ -398,7 +398,7 @@ func (s *Service) Transfer(ctx context.Context, req TransferRequest, actorID str
 	if err != nil {
 		return nil, fmt.Errorf("begin tx: %w", err)
 	}
-	defer tx.Rollback(ctx)
+	defer tx.Rollback(ctx) //nolint:errcheck
 
 	refID := uuid.New().String()
 

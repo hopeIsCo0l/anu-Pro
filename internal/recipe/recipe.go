@@ -146,7 +146,7 @@ func (s *Service) CreateRecipe(ctx context.Context, req CreateRecipeRequest) (*R
 	if err != nil {
 		return nil, fmt.Errorf("begin tx: %w", err)
 	}
-	defer tx.Rollback(ctx)
+	defer tx.Rollback(ctx) //nolint:errcheck
 
 	var recipeID string
 	if err := tx.QueryRow(ctx,
@@ -273,7 +273,7 @@ func (s *Service) AddVersion(ctx context.Context, recipeID string, req CreateVer
 	if err != nil {
 		return nil, fmt.Errorf("begin tx: %w", err)
 	}
-	defer tx.Rollback(ctx)
+	defer tx.Rollback(ctx) //nolint:errcheck
 
 	v, err := insertVersion(ctx, tx, recipeID, nextVersion,
 		req.OutputQty.String(), req.OutputUnit, yieldPct.String(), req.Notes,

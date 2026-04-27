@@ -70,7 +70,7 @@ func (s *Service) Signup(ctx context.Context, req SignupRequest, userAgent, ipAd
 	if err != nil {
 		return nil, fmt.Errorf("begin tx: %w", err)
 	}
-	defer tx.Rollback(ctx)
+	defer tx.Rollback(ctx) //nolint:errcheck
 
 	var slugExists bool
 	if err := tx.QueryRow(ctx,
@@ -167,7 +167,7 @@ func (s *Service) Refresh(ctx context.Context, plainToken, userAgent, ipAddr str
 	if err != nil {
 		return nil, fmt.Errorf("begin tx: %w", err)
 	}
-	defer tx.Rollback(ctx)
+	defer tx.Rollback(ctx) //nolint:errcheck
 
 	var (
 		userID     string

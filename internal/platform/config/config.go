@@ -11,9 +11,9 @@ type Config struct {
 	DatabaseURL string `envconfig:"DATABASE_URL" required:"true"`
 
 	// JWT
-	JWTSecret           string `envconfig:"JWT_SECRET" required:"true"`
-	JWTAccessExpiryMin  int    `envconfig:"JWT_ACCESS_EXPIRY_MIN" default:"15"`
-	JWTRefreshExpiryDays int   `envconfig:"JWT_REFRESH_EXPIRY_DAYS" default:"30"`
+	JWTSecret            string `envconfig:"JWT_SECRET" required:"true"`
+	JWTAccessExpiryMin   int    `envconfig:"JWT_ACCESS_EXPIRY_MIN" default:"15"`
+	JWTRefreshExpiryDays int    `envconfig:"JWT_REFRESH_EXPIRY_DAYS" default:"30"`
 
 	// Storage — S3-compatible (R2 in prod, MinIO locally)
 	StorageEndpoint  string `envconfig:"STORAGE_ENDPOINT" required:"true"`

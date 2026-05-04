@@ -77,10 +77,14 @@ func main() {
 	}
 }
 
-// run sets the search_path to schema, then runs the goose command
+// run creates the schema if needed, sets search_path, then runs the goose command
 // against the SQL files in the given directory of the embedded FS.
 func run(db *sql.DB, schema, dir, command string) error {
-	if _, err := db.Exec(fmt.Sprintf("SET search_path TO %s", schema)); err != nil {
+	quoted := `"` + schema + `"`
+	if _, err := db.Exec("CREATE SCHEMA IF NOT EXISTS " + quoted); err != nil {
+		return fmt.Errorf("create schema %s: %w", schema, err)
+	}
+	if _, err := db.Exec("SET search_path TO " + quoted); err != nil {
 		return fmt.Errorf("set search_path to %s: %w", schema, err)
 	}
 

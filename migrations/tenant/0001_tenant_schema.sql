@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS stock_movements (
     quantity        NUMERIC(18,6) NOT NULL,
     movement_type   TEXT         NOT NULL,
     reference_id    UUID,
-    idempotency_key TEXT         UNIQUE NOT NULL,
+    idempotency_key TEXT         NOT NULL,
     unit_cost       NUMERIC(18,6),
     notes           TEXT,
     actor_id        UUID         NOT NULL,
@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS stock_movements_2026_07 PARTITION OF stock_movements
 CREATE TABLE IF NOT EXISTS stock_movements_2026_08 PARTITION OF stock_movements
     FOR VALUES FROM ('2026-08-01') TO ('2026-09-01');
 
+CREATE INDEX IF NOT EXISTS sm_idem_idx        ON stock_movements (idempotency_key);
 CREATE INDEX IF NOT EXISTS sm_lot_id_idx      ON stock_movements (lot_id,      created_at DESC);
 CREATE INDEX IF NOT EXISTS sm_location_id_idx ON stock_movements (location_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS sm_type_idx        ON stock_movements (movement_type, created_at DESC);

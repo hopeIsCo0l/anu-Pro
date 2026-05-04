@@ -11,11 +11,14 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"log/slog"
 
 	"github.com/hopeIsCo0l/anu-pro/internal/platform/config"
+	"github.com/hopeIsCo0l/anu-pro/internal/platform/db"
 	"github.com/hopeIsCo0l/anu-pro/internal/platform/httpserver"
 	"github.com/hopeIsCo0l/anu-pro/internal/platform/logger"
+	"github.com/hopeIsCo0l/anu-pro/internal/platform/storage"
 )
 
 func main() {
@@ -28,17 +31,40 @@ func main() {
 	log := logger.New(cfg)
 	slog.SetDefault(log)
 
+	pool, err := db.New(cfg)
+	if err != nil {
+		slog.Error("db init failed", "err", err)
+		os.Exit(1)
+	}
+	defer pool.Close()
+	slog.Info("database connected")
+
+	store, err := storage.New(cfg)
+	if err != nil {
+		slog.Error("storage init failed", "err", err)
+		os.Exit(1)
+	}
+	slog.Info("storage connected")
+
 	r := chi.NewRouter()
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:3001"},
+		AllowedMethods:   []string{"GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Authorization", "Content-Type"},
+		AllowCredentials: false,
+		MaxAge:           300,
+	}))
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(httpserver.RequestLogger)
 	r.Use(middleware.Recoverer)
 
-	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/health", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
 		fmt.Fprintln(w, `{"status":"ok"}`)
 	})
+
+	httpserver.RegisterRoutes(r, pool, store, cfg)
 
 	srv := &http.Server{
 		Addr:         ":" + cfg.Port,

@@ -27,15 +27,15 @@ var (
 // ── Domain types ──────────────────────────────────────────────────────────────
 
 type Recipe struct {
-	ID           string    `json:"id"`
-	Name         string    `json:"name"`
-	OutputItemID string    `json:"output_item_id"`
-	OutputItem   *string   `json:"output_item_name,omitempty"`
-	Notes        *string   `json:"notes,omitempty"`
-	IsActive     bool      `json:"is_active"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
-	LatestVersion *Version `json:"latest_version,omitempty"`
+	ID            string    `json:"id"`
+	Name          string    `json:"name"`
+	OutputItemID  string    `json:"output_item_id"`
+	OutputItem    *string   `json:"output_item_name,omitempty"`
+	Notes         *string   `json:"notes,omitempty"`
+	IsActive      bool      `json:"is_active"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
+	LatestVersion *Version  `json:"latest_version,omitempty"`
 }
 
 type Version struct {
@@ -52,27 +52,27 @@ type Version struct {
 }
 
 type Input struct {
-	ID               string          `json:"id"`
-	RecipeVersionID  string          `json:"recipe_version_id"`
-	ItemID           string          `json:"item_id"`
-	ItemName         *string         `json:"item_name,omitempty"`
-	ItemSKU          *string         `json:"item_sku,omitempty"`
-	Quantity         decimal.Decimal `json:"quantity"`
-	Unit             string          `json:"unit"`
-	IsOptional       bool            `json:"is_optional"`
-	Notes            *string         `json:"notes,omitempty"`
-	SortOrder        int             `json:"sort_order"`
+	ID              string          `json:"id"`
+	RecipeVersionID string          `json:"recipe_version_id"`
+	ItemID          string          `json:"item_id"`
+	ItemName        *string         `json:"item_name,omitempty"`
+	ItemSKU         *string         `json:"item_sku,omitempty"`
+	Quantity        decimal.Decimal `json:"quantity"`
+	Unit            string          `json:"unit"`
+	IsOptional      bool            `json:"is_optional"`
+	Notes           *string         `json:"notes,omitempty"`
+	SortOrder       int             `json:"sort_order"`
 }
 
 type Output struct {
-	ID               string          `json:"id"`
-	RecipeVersionID  string          `json:"recipe_version_id"`
-	ItemID           string          `json:"item_id"`
-	ItemName         *string         `json:"item_name,omitempty"`
-	Quantity         decimal.Decimal `json:"quantity"`
-	Unit             string          `json:"unit"`
-	OutputType       string          `json:"output_type"`
-	Notes            *string         `json:"notes,omitempty"`
+	ID              string          `json:"id"`
+	RecipeVersionID string          `json:"recipe_version_id"`
+	ItemID          string          `json:"item_id"`
+	ItemName        *string         `json:"item_name,omitempty"`
+	Quantity        decimal.Decimal `json:"quantity"`
+	Unit            string          `json:"unit"`
+	OutputType      string          `json:"output_type"`
+	Notes           *string         `json:"notes,omitempty"`
 }
 
 // ── Request types ─────────────────────────────────────────────────────────────
@@ -499,7 +499,12 @@ func insertVersion(ctx context.Context, tx pgx.Tx, recipeID string, version int,
 			VALUES ($1, $2, $3::NUMERIC, $4, $5, $6, $7)
 			RETURNING id
 		`, v.ID, inp.ItemID, inp.Quantity.String(), inp.Unit, inp.IsOptional, inp.Notes,
-			func() int { if inp.SortOrder != 0 { return inp.SortOrder }; return i }(),
+			func() int {
+				if inp.SortOrder != 0 {
+					return inp.SortOrder
+				}
+				return i
+			}(),
 		).Scan(&id); err != nil {
 			return nil, fmt.Errorf("insert input: %w", err)
 		}

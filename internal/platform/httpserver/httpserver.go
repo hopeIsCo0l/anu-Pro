@@ -6,11 +6,11 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
+	"github.com/hopeIsCo0l/anu-pro/internal/inventory"
 	authpkg "github.com/hopeIsCo0l/anu-pro/internal/platform/auth"
 	appcfg "github.com/hopeIsCo0l/anu-pro/internal/platform/config"
 	"github.com/hopeIsCo0l/anu-pro/internal/platform/storage"
 	"github.com/hopeIsCo0l/anu-pro/internal/platform/tenant"
-	"github.com/hopeIsCo0l/anu-pro/internal/inventory"
 	"github.com/hopeIsCo0l/anu-pro/internal/recipe"
 
 	"github.com/jackc/pgx/v5/pgxpool"
